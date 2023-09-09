@@ -1,0 +1,16 @@
+{
+  "db": {
+    "name": "db",
+    "connector": "memory"
+  },
+  "datasource": {
+    "host": "localhost",
+    "port": 3306,
+    "url": "",
+    "database": "petsitters",
+    "password": "@P0rtug41",
+    "name": "datasource",
+    "user": "stark",
+    "connector": "mysql"
+  }
+}
