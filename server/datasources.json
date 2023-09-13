@@ -3,13 +3,13 @@
     "name": "db",
     "connector": "memory"
   },
-  "datasource": {
+  "mysql": {
     "host": "localhost",
     "port": 3306,
     "url": "",
     "database": "petsitters",
     "password": "@P0rtug41",
-    "name": "datasource",
+    "name": "mysql",
     "user": "stark",
     "connector": "mysql"
   }

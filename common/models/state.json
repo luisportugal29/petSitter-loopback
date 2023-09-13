@@ -1,0 +1,24 @@
+{
+  "name": "state",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "mysql": {
+    "table": "STATES"
+  },
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "id": {
+      "type": "number"
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}

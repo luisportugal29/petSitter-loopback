@@ -32,11 +32,35 @@
     }
   },
   "Role": {
-    "dataSource": "db",
+    "dataSource": "mysql",
     "public": false
   },
-  "sitters": {
-    "dataSource": "db",
+  "sitter": {
+    "dataSource": "mysql",
     "public": true
+  },
+  "city": {
+    "dataSource": "mysql",
+    "public": true
+  },
+  "rating": {
+    "dataSource": "mysql",
+    "public": false
+  },
+  "pet": {
+    "dataSource": "mysql",
+    "public": true
+  },
+  "photo": {
+    "dataSource": "mysql",
+    "public": false
+  },
+  "skill": {
+    "dataSource": "mysql",
+    "public": false
+  },
+  "state": {
+    "dataSource": "mysql",
+    "public": false
   }
 }

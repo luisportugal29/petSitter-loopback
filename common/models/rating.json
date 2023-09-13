@@ -1,0 +1,45 @@
+{
+  "name": "rating",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "mysql": {
+    "table": "RATINGS"
+  },
+  "properties": {
+    "id": {
+      "type": "number"
+    },
+    "rating": {
+      "type": "number",
+      "required": true
+    },
+    "comment": {
+      "type": "string",
+      "required": true
+    },
+    "created_at": {
+      "type": "date"
+    },
+    "user_id": {
+      "type": "number",
+      "required": true
+    },
+    "sitter_id": {
+      "type": "number",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {
+    "sitter": {
+      "type": "belongsTo",
+      "model": "sitter",
+      "foreignKey": "sitter_id"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

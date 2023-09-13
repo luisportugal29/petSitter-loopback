@@ -1,0 +1,50 @@
+{
+  "name": "city",
+  "plural": "cities",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "mysql": {
+    "table": "CITIES"
+  },
+  "properties": {
+    "id": {
+      "type": "number"
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "state_id": {
+      "type": "number",
+      "required": true
+    },
+    "latitude": {
+      "type": "number",
+      "required": false,
+      "default": 0
+    },
+    "longitude": {
+      "type": "number",
+      "required": false,
+      "default": 0
+    }
+  },
+  "validations": [],
+  "relations": {
+    "sitter": {
+      "type": "hasMany",
+      "model": "sitter",
+      "foreignKey": "city_id"
+    },
+    "state": {
+      "type": "belongsTo",
+      "model": "state",
+      "foreignKey": "state_id"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

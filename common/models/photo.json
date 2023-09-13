@@ -1,0 +1,28 @@
+{
+  "name": "photo",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "mysql": {
+    "table": "PHOTOS"
+  },
+  "properties": {
+    "id": {
+      "type": "number"
+    },
+    "photoUrl": {
+      "type": "string",
+      "required": true
+    },
+    "sitter_id": {
+      "type": "number",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}

@@ -1,0 +1,57 @@
+{
+  "name": "sitter",
+  "plural": "sitters",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "mysql": {
+    "table": "SITTERS"
+  },
+  "properties": {
+    "id": {
+      "type": "number",
+      "default": 0
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "lastName": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "debutYear": {
+      "type": "date",
+      "required": true
+    },
+    "city_id": {
+      "type": "number"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "city": {
+      "type": "belongsTo",
+      "model": "city",
+      "foreignKey": "city_id"
+    },
+    "rating": {
+      "type": "hasMany",
+      "model": "rating",
+      "foreignKey": "sitter_id"
+    },
+    "photo": {
+      "type": "hasMany",
+      "model": "photo",
+      "foreignKey": "sitter_id"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}
