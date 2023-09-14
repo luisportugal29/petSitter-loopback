@@ -45,7 +45,7 @@
   },
   "rating": {
     "dataSource": "mysql",
-    "public": false
+    "public": true
   },
   "pet": {
     "dataSource": "mysql",
@@ -62,5 +62,9 @@
   "state": {
     "dataSource": "mysql",
     "public": false
+  },
+  "customuser": {
+    "dataSource": "mysql",
+    "public": true
   }
 }

@@ -1,6 +1,10 @@
 'use strict';
+const auth = require('../../server/middleware/auth');
 
 module.exports = function(Sitter) {
+
+
+    Sitter.beforeRemote('findAll', (ctx, _, next) => auth(ctx.req, ctx.res, next) );
 
     Sitter.findAll = async ( req, res ) => {
         try {
@@ -78,7 +82,8 @@ module.exports = function(Sitter) {
         }
     };
 
-    Sitter.filterByCity = async (req, res) => {
+
+    Sitter.filterBy = async (req, res) => {
         try {
 
             const { city, name } = req.query;
@@ -126,7 +131,7 @@ module.exports = function(Sitter) {
             res.status( 200 ).send( sitters );
 
         } catch( err ) {
-           c
+
             res.status(500).send({ error: err });
         }
     };
@@ -197,9 +202,9 @@ module.exports = function(Sitter) {
     });
 
     
-    Sitter.remoteMethod('filterByCity', {
+    Sitter.remoteMethod('filterBy', {
         http: {
-            path: '/filterByCity',
+            path: '/filterBy',
             verb: 'get'
         },
         accepts: [

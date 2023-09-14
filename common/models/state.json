@@ -2,11 +2,11 @@
   "name": "state",
   "base": "PersistedModel",
   "idInjection": true,
-  "mysql": {
-    "table": "STATES"
-  },
   "options": {
     "validateUpsert": true
+  },
+  "mysql": {
+    "table": "STATES"
   },
   "properties": {
     "id": {
