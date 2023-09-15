@@ -114,43 +114,7 @@ module.exports = function(Sitter) {
                 GROUP BY s.id
                 ORDER BY s.name`;
 
-             
-            const sitters = await executeQuery(query, [`${name}%`, `${city}%`]);
-
-            console.log(sitters);
-
-        //     if ( city && name ) {
-        //         query = {
-        //             where: { name : { like : `${name}%`}},
-        //             include: {
-        //                 relation: 'city',
-        //                 scope: {
-        //                     where: { name : { like: `${city}%` } }
-        //                 }
-        //             }
-        //         };
-        //     }
-
-        //    if ( city && !name ) {
-        //         query = {
-        //             include: {
-        //                 relation: 'city',
-        //                 scope: {
-        //                     where: { name : { like: `${city}%`}}
-        //                 }
-        //             }
-        //         };
-        //    }
-
-        //    if ( name && !city ) {
-        //         query = {
-        //             where: { name : { like : `${name}%`}},
-        //         };
-        //    }
-        
-        //    let sitters = await Sitter.find( query );
-
-        //    sitters =  !city ? sitters : sitters.filter(sitter => sitter.city());
+            const sitters = await executeQuery(query, [`${name}%`, `${city}%`]); 
 
             res.status( 200 ).send( sitters );
 
