@@ -1,14 +1,25 @@
 'use strict';
+const { differenceInYears } = require('date-fns');
 
 module.exports = function(Rating) {
 
     Rating.getLastComments = async(req, res) => {
         try {
 
-            const ratings = await Rating.find({
+            let ratings = await Rating.find({
                 where: { rating: 5 },
+                fields: ['id', 'rating','comment','user_id'],
                 order: 'created_at desc',
-                limit: 5
+                limit: 5,
+                include: {
+                    relation: 'customuser',
+                }
+            });
+
+            ratings = ratings.map( ({id, rating, comment, customuser}) => {
+                const { name, birthDate} = customuser();
+
+                return { id, rating, comment, name, age: differenceInYears(new Date(), birthDate)};
             });
             
             res.status(200).send(ratings);

@@ -38,6 +38,11 @@
       "type": "belongsTo",
       "model": "sitter",
       "foreignKey": "sitter_id"
+    },
+    "customuser": {
+      "type": "belongsTo",
+      "model": "customuser",
+      "foreignKey": "user_id"
     }
   },
   "acls": [],

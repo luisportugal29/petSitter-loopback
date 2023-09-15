@@ -3,8 +3,20 @@ const auth = require('../../server/middleware/auth');
 
 module.exports = function(Sitter) {
 
+    //protected route handlers
+    //Sitter.beforeRemote('findAll', (ctx, _, next) => auth(ctx.req, ctx.res, next) );
+    //Sitter.beforeRemote('filterBy', (ctx, _ , next) => auth(ctx.req, ctx.res, next));
+    Sitter.beforeRemote('add', (ctx, _ , next) => auth(ctx.req, ctx.res, next));
+    Sitter.beforeRemote('getComments', (ctx, _ , next) => auth(ctx.req, ctx.res, next));
 
-    Sitter.beforeRemote('findAll', (ctx, _, next) => auth(ctx.req, ctx.res, next) );
+    const executeQuery = (query, params) => new Promise((resolve, reject ) => {
+        Sitter.dataSource.connector.query(query, params, (err, data) => {
+            if ( !err)
+                return resolve(data);
+            reject(err);
+        });
+    }) 
+
 
     Sitter.findAll = async ( req, res ) => {
         try {
@@ -93,45 +105,57 @@ module.exports = function(Sitter) {
                 return;
             }
 
-            let query;
+            let query = `SELECT s.id,s.name, s.lastName, c.name as city, st.name as state, 
+                round(avg (r.rating)) as rating FROM SITTERS s
+                INNER JOIN CITIES c on c.id = s.city_id
+                INNER JOIN STATES st on st.id = c.state_id
+                INNER JOIN RATINGS r on r.sitter_id = s.id
+                WHERE s.name like ? AND c.name like ?
+                GROUP BY s.id
+                ORDER BY s.name`;
 
-            if ( city && name ) {
-                query = {
-                    where: { name : { like : `${name}%`}},
-                    include: {
-                        relation: 'city',
-                        scope: {
-                            where: { name : { like: `${city}%` } }
-                        }
-                    }
-                };
-            }
+             
+            const sitters = await executeQuery(query, [`${name}%`, `${city}%`]);
 
-           if ( city && !name ) {
-                query = {
-                    include: {
-                        relation: 'city',
-                        scope: {
-                            where: { name : { like: `${city}%`}}
-                        }
-                    }
-                };
-           }
+            console.log(sitters);
 
-           if ( name && !city ) {
-                query = {
-                    where: { name : { like : `${name}%`}},
-                };
-           }
+        //     if ( city && name ) {
+        //         query = {
+        //             where: { name : { like : `${name}%`}},
+        //             include: {
+        //                 relation: 'city',
+        //                 scope: {
+        //                     where: { name : { like: `${city}%` } }
+        //                 }
+        //             }
+        //         };
+        //     }
+
+        //    if ( city && !name ) {
+        //         query = {
+        //             include: {
+        //                 relation: 'city',
+        //                 scope: {
+        //                     where: { name : { like: `${city}%`}}
+        //                 }
+        //             }
+        //         };
+        //    }
+
+        //    if ( name && !city ) {
+        //         query = {
+        //             where: { name : { like : `${name}%`}},
+        //         };
+        //    }
         
-           let sitters = await Sitter.find( query );
+        //    let sitters = await Sitter.find( query );
 
-           sitters =  !city ? sitters : sitters.filter(sitter => sitter.city());
+        //    sitters =  !city ? sitters : sitters.filter(sitter => sitter.city());
 
             res.status( 200 ).send( sitters );
 
         } catch( err ) {
-
+            console.log(err)
             res.status(500).send({ error: err });
         }
     };
@@ -201,7 +225,6 @@ module.exports = function(Sitter) {
         }
     });
 
-    
     Sitter.remoteMethod('filterBy', {
         http: {
             path: '/filterBy',

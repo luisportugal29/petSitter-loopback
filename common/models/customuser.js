@@ -47,7 +47,7 @@ module.exports = function(Customuser) {
                 return;
             }
             
-            const token = jwt.sign({ id : user.id }, 'SECRET_KEY');
+            const token = jwt.sign({ id : user.id }, 'SECRET_KEY', { expiresIn: '1d'});
 
             res.send({user, token });
 
