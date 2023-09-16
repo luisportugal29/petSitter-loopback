@@ -7,7 +7,7 @@ module.exports = function(Sitter) {
     //Sitter.beforeRemote('findAll', (ctx, _, next) => auth(ctx.req, ctx.res, next) );
     //Sitter.beforeRemote('filterBy', (ctx, _ , next) => auth(ctx.req, ctx.res, next));
     Sitter.beforeRemote('add', (ctx, _ , next) => auth(ctx.req, ctx.res, next));
-    Sitter.beforeRemote('getComments', (ctx, _ , next) => auth(ctx.req, ctx.res, next));
+    //Sitter.beforeRemote('getComments', (ctx, _ , next) => auth(ctx.req, ctx.res, next));
 
     const executeQuery = (query, params) => new Promise((resolve, reject ) => {
         Sitter.dataSource.connector.query(query, params, (err, data) => {
@@ -48,7 +48,7 @@ module.exports = function(Sitter) {
             });
 
 
-            sitters = sitters.map( ({ name , lastName, rating, photo, city }) => {
+            sitters = sitters.map( ({ name ,  id, lastName, rating, photo, city }) => {
 
                 const ratings = rating();
 
@@ -63,6 +63,7 @@ module.exports = function(Sitter) {
                 const { name : state } = city()?.state() || { };
                 
                 return { 
+                    id,
                     city: cityName ? cityName : '',
                     state: state ? state : '',
                     photoUrl: photos.length ? photos[0].photoUrl : null,
@@ -114,7 +115,7 @@ module.exports = function(Sitter) {
                 GROUP BY s.id
                 ORDER BY s.name`;
 
-            const sitters = await executeQuery(query, [`${name}%`, `${city}%`]); 
+            const sitters = await executeQuery(query, [`${name ? name : ''}%`, `${city ? city : ''}%`]); 
 
             res.status( 200 ).send( sitters );
 
@@ -124,33 +125,48 @@ module.exports = function(Sitter) {
         }
     };
 
-    Sitter.getComments = async (req, res) => {
+    Sitter.findSitter = async (req, res) => {
         try {
 
             const { id } = req.query;
 
-            if ( !id ) {
-                res.status(404).send({message: 'id was not provided'});
-                return;
-            }
+            let query = `SELECT concat(s.name, ' ',s.lastName) as name, 
+            s.description, 
+            c.name as city,
+            round(avg(r.rating)) as rating,
+            group_concat(sk.description) as skills,
+            group_concat(ph.photoUrl) as photos
+            FROM SITTERS s
+            INNER JOIN CITIES c on c.id = s.city_id
+            INNER JOIN SKILLS sk on sk.sitter_id = s.id
+            INNER JOIN PHOTOS ph on ph.sitter_id = s.id
+            INNER JOIN RATINGS r on r.sitter_id = s.id
+            WHERE s.id = ?
+            GROUP BY s.id`;
 
-            const sitter = await Sitter.findOne({ 
-                where: { id },
-                include: {
-                    relation: 'rating',
-                    scope: {
-                        fields: ['id', 'comment', 'rating']
-                    }
-                }
-            });
+            let sitter = await executeQuery(query, [id]);
+            sitter = sitter[0];
 
-            const ratings = sitter.rating();
+            query = `SELECT r.id,
+            r.comment, 
+            r.created_at as date,
+            u.address as location, 
+            u.name,
+            u.photoUrl 
+            FROM RATINGS r
+            INNER JOIN USERS u on u.id = r.user_id
+            WHERE r.sitter_id = ?`;
 
-            const ratingTotal = ratings.reduce((sum, { rating: value }) => sum + value, 0);
+            const comments = await executeQuery(query, [id]);
+            
+            sitter = {
+                ...sitter,
+                skills : sitter.skills.split(','),
+                photos: sitter.photos.split(','),
+                comments
+            };
 
-            const avg = Math.round( ratingTotal / sitter.rating.length );
-
-            res.status(200).send({ avg, comments: ratings});
+            res.status(200).send(sitter);
 
         } catch( err ) {
             console.log(err);
@@ -205,9 +221,9 @@ module.exports = function(Sitter) {
         }
     });
 
-    Sitter.remoteMethod('getComments', {
+    Sitter.remoteMethod('findSitter', {
         http: {
-            path: '/comments',
+            path: '/findsitter',
             verb: 'get'
         },
         accepts: [
